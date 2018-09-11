@@ -57,7 +57,7 @@ namespace RabbitMQ.Santard
         private static void SendMessage(Payment message)
         {
             _model.BasicPublish("", QueueName, null, message.Serialize());
-            Console.WriteLine(" [x] Payment Message Sent : {0} : {1} : {2}", message.CardNumber, message.AmountToPay, message.Name);
+            Console.WriteLine($" [x] Payment Message Sent : {message.CardNumber} : {message.AmountToPay} : {message.Name}");
         }
 
         public static void Receive()
@@ -72,7 +72,7 @@ namespace RabbitMQ.Santard
             {
                 Payment message = (Payment)ea.Body.DeSerialize(typeof(Payment));
 
-                Console.WriteLine("----- Received {0} : {1} : {2}", message.CardNumber, message.AmountToPay, message.Name);
+                Console.WriteLine($"----- Received {message.CardNumber} : {message.AmountToPay} : {message.Name}");
             };
 
         }
