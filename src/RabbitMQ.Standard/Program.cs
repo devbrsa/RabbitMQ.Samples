@@ -41,7 +41,7 @@ namespace RabbitMQ.Santard
 
             Receive();
 
-            Console.ReadLine();
+            //Console.ReadLine();
 
         }
 
