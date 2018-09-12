@@ -15,30 +15,30 @@ namespace WorkerQueue.Consumer
         private static void Main(string[] args)
         {
             Receive();
+
+            Console.ReadLine();
         }
 
         public static void Receive()
         {
             _factory = new ConnectionFactory { HostName = "localhost", UserName = "guest", Password = "guest" };
-            using (_connection = _factory.CreateConnection())
-            {
-                using (IModel channel = _connection.CreateModel())
-                {
-                    channel.QueueDeclare(QueueName, true, false, false, null);
-                    channel.BasicQos(0, 1, false);
+            _connection = _factory.CreateConnection();
 
-                    EventingBasicConsumer consumer = new EventingBasicConsumer(channel);
+            IModel channel = _connection.CreateModel();
 
-                    consumer.Received += (model, ea) =>
+            channel.QueueDeclare(QueueName, true, false, false, null);
+            channel.BasicQos(0, 1, false);
+
+            EventingBasicConsumer consumer = new EventingBasicConsumer(channel);
+
+            consumer.Received += (model, ea) =>
                     {
                         Payment message = (Payment)ea.Body.DeSerialize(typeof(Payment));
                         Console.WriteLine($"----- Payment Processed {message.CardNumber} : {message.AmountToPay}");
                         channel.BasicAck(ea.DeliveryTag, false);
                     };
 
-                    channel.BasicConsume(QueueName, false, consumer);
-                }
-            }
+            channel.BasicConsume(QueueName, false, consumer);
         }
     }
 }
